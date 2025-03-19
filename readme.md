@@ -1,8 +1,8 @@
 # custom_ip_with_litex
 
-> The goal of this repository is to show how to integrate a custom IP written in verilog in a LiteX-based SoC design
+> The goal of this repository is to show how to integrate a custom IP written in Verilog in a LiteX-based SoC design
 
-> Many thanks to [Tianxu Li](https://labsticc.fr/en/directory/li-tianxu) for this help with the deisgn of the AXI-lite read/write logic.
+> Many thanks to [Tianxu Li](https://labsticc.fr/en/directory/li-tianxu) for his help with the design of the AXI-lite read/write logic.
 
 ## Requirements
 
