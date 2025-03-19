@@ -65,14 +65,12 @@ A second for the write process:
 
 ## Custom IP design
 
-The following two files are located in `<litex_install_directory>/litex/litex/soc/cores`.
-
 ### Verilog code
-
+> The following file is located in `<litex_install_directory>/litex-boards/litex_boards/targets/`.
 See [files/custom_ip.v](./files/custom_ip.v)
 
 ### Python class for LiteX
-
+> The following file is located in `<litex_install_directory>/litex/litex/soc/cores`.
 See [files/custom_ip.py](./files/custom_ip.py)
 
 ## Integration of the custom IP in the main SoC script
