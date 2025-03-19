@@ -10,26 +10,64 @@
 
 - Tested with [LiteX](https://github.com/enjoy-digital/litex). Any recent version should work.
 
-## Goal 
+## Goal
 
 We want to build a very simple SoC with a RISC-V processor and a custom IP on a AXI-lite bus.
 
 <img src="images/soc.drawio.png" alt="soc" width="50%"/>
 
 The custom IP:
+
 - Has three registers `reg_a`, `reg_b` and `reg_c`.
 - Has a read/write logic for an AXI-lite bus.
 - Computes a function `reg_c=f_n(reg_a,reg_b)`. In this first example, we will use a simple adder (`reg_c=reg_a+reg_b`).
 
 ## Description of the AXI-lite read/write logic
 
-**todo. Need some details about how the FSM is built to have a correct read/write logic.**
+Based on the [AXI documentation](https://developer.arm.com/documentation/ihi0022/latest/), we can define two FSMs. One for the read process:
+
+![read_cycle](./images/read_fsm.png)
+
+| State | Actions       |
+| ----- | ------------- |
+| idle  | `arready=1`   |
+|       | `rvalid=0`    |
+| read  | `arready=0`   |
+|       | `rvalid=1`    |
+|       | `rresp=0`     |
+|       | `rdata=value` |
+
+A second for the write process:
+
+![read_cycle](./images/write_fsm.png)
+
+| State | Actions                     |
+| ----- | --------------------------- |
+| widle | `awready=1`                 |
+|       | `wready=0`                  |
+|       | `bvalid=0`                  |
+| write | `awready=0`                 |
+|       | `wready=1`                  |
+|       | `bvalid=0`                  |
+|       | `wdata=value` if `wvalid=1` |
+| resp  | `awready=0`                 |
+|       | `wready=0`                  |
+|       | `bvalid=1`                  |
+|       | `bresp=0`                   |
+
+### Simple read transaction
+
+![read_cycle](./images/read_cycle.png)
+
+### Simple write transaction
+
+![write_cycle](./images/write_cycle.png)
 
 ## Custom IP design
 
 The following two files are located in `<litex_install_directory>/litex/litex/soc/cores`.
 
-### Verilog code 
+### Verilog code
 
 See [files/custom_ip.v](./files/custom_ip.v)
 
@@ -43,14 +81,14 @@ The following file is located at `<litex_install_directory>/litex-boards/blob/ma
 
 ```diff
 @@ -24,6 +24,9 @@ from litedram.phy import s7ddrphy
- 
+
  from liteeth.phy.rmii import LiteEthPHYRMII
- 
+
 +from litex.soc.cores.custom_ip import CustomIP
 +from litex.soc.integration.soc import SoCRegion
 +
  # CRG ----------------------------------------------------------------------------------------------
- 
+
  class _CRG(LiteXModule):
 @@ -61,6 +64,7 @@ class BaseSoC(SoCCore):
          with_led_chaser        = True,
@@ -59,7 +97,7 @@ The following file is located at `<litex_install_directory>/litex-boards/blob/ma
 +        with_custom_ip         = True,
          **kwargs):
          platform = digilent_nexys4ddr.Platform()
- 
+
 @@ -105,6 +109,13 @@ class BaseSoC(SoCCore):
              self.leds = LedChaser(
                  pads         = platform.request_all("user_led"),
@@ -107,7 +145,7 @@ litex> mem_write 0x30000004 0x01020304
 litex> mem_read 0x30000000 16         
 Memory dump:
 0x30000000  78 56 34 12 04 03 02 01 7c 59 36 13 01 00 00 00  xV4.....|Y6.....
-``` 
+```
 
 1. We read 16 bytes at the base address: 3 registers are void. However, we have some data at `0x3000000C` (`data=0x00000001`) which is ignored for now as we don't use this address.
 

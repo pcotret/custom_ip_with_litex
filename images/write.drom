@@ -1,0 +1,14 @@
+{signal: [
+  {name: 'aclk', wave: '0p..............'},
+  {name: 'aresetn', wave: '0..1............'},
+  {name: 'awaddr', wave: 'x......3...x....',data:['12345678']},
+  {name: 'awvalid', wave: '0......1...0....'},
+  {name: 'awready', wave: '0.........10....'},
+  {name: 'wdata', wave: 'x......4...x....',data:['deadbeef']},
+  {name: 'wvalid', wave: '0......1...0...'},
+  {name: 'wready', wave: '0.........10....'},
+  {name: 'bvalid', wave: '0..........10...'},
+  {name: 'bready', wave: '0......1....0...'},
+  {name: 'b2iaddr', wave: 'x.......3..x....',data:['12345678']},
+  {name: 'b2idata', wave: 'x.......4..x....',data:['deadbeef']},
+]}
