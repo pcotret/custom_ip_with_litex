@@ -106,7 +106,7 @@ The following file is located at `<litex_install_directory>/litex-boards/blob/ma
 +            # Base address 
 +            self.custom_ip_base = 0x30000000
 +            # Available address range
-+            self.custom_ip_size = 0x1000
++            self.custom_ip_size = 0x3
 +            self.bus.add_slave(name="custom_ip", slave=self.custom_ip.bus, region=SoCRegion(origin=self.custom_ip_base,
 +                                                                                            size=self.custom_ip_size))
 ```
