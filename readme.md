@@ -120,33 +120,34 @@ The following file is located at `<litex_install_directory>/litex-boards/blob/ma
 Test in the LiteX prompt:
 
 ```
-litex> mem_list
-Available memory regions:
-ROM        0x00000000 0x20000 
-SRAM       0x10000000 0x2000 
-MAIN_RAM   0x40000000 0x8000000 
-CUSTOM_IP  0x30000000 0x1000 
-CSR        0xf0000000 0x10000 
-
-litex> mem_read 0x30000000 16 
+# Lecture at boot
+litex> mem_read 0x30000000 48
 Memory dump:
-0x30000000  00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00  ................
+0x30000000  00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00  
+0x30000010  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  
+0x30000020  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  
 
-litex> mem_write 0x30000000 0x12345678
-
-litex> mem_read 0x30000000 16         
+# Write in reg_a, reg_c is computed
+litex> mem_write 0x30000000 0x11223344
+litex> mem_read 0x30000000 48         
 Memory dump:
-0x30000000  78 56 34 12 00 00 00 00 78 56 34 12 01 00 00 00  xV4.....xV4.....
+0x30000000  44 33 22 11 00 00 00 00 44 33 22 11 01 00 00 00  
+0x30000010  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  
+0x30000020  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  
 
+# Write in reg_b, reg_c is updated
 litex> mem_write 0x30000004 0x01020304
-
-litex> mem_read 0x30000000 16         
+litex> mem_read 0x30000000 48         
 Memory dump:
-0x30000000  78 56 34 12 04 03 02 01 7c 59 36 13 01 00 00 00  xV4.....|Y6.....
+0x30000000  44 33 22 11 04 03 02 01 48 36 24 12 01 00 00 00  
+0x30000010  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  
+0x30000020  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  
+
+# Write in reg_c, correctly ignored
+litex> mem_write 0x30000008 0xffffffff
+litex> mem_read 0x30000000 48         
+Memory dump:
+0x30000000  44 33 22 11 04 03 02 01 48 36 24 12 01 00 00 00  D3".....H6$.....
+0x30000010  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+0x30000020  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
 ```
-
-1. We read 16 bytes at the base address: 3 registers are void. However, we have some data at `0x3000000C` (`data=0x00000001`) which is ignored for now as we don't use this address.
-
-2. We write a dummy value for the first register. The result is directly computed.
-
-3. We write a dummy value in the second register. The result is updated as well.
